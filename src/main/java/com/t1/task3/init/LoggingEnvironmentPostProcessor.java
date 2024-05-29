@@ -13,7 +13,10 @@ public class LoggingEnvironmentPostProcessor implements EnvironmentPostProcessor
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         log.info("Post processing environment");
         String checkProperty = environment.getProperty("http.aop.interceptor.enable");
-        if (!("true".equalsIgnoreCase(checkProperty) || "false".equalsIgnoreCase(checkProperty))) {
+        if (checkProperty != null
+                && !checkProperty.equalsIgnoreCase("true")
+                && !checkProperty.equalsIgnoreCase("false")) {
+
             throw new LoggingProcessException("Ошибка при проверке свойства 'http.aop.interceptor.enable':"
            + System.lineSeparator() + "свойство принимает значения true/false");
         }
