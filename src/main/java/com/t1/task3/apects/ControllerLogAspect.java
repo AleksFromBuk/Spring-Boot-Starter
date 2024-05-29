@@ -1,5 +1,6 @@
 package com.t1.task3.apects;
 
+import com.t1.task3.model.HttpLog;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -8,58 +9,65 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Aspect
 @Component
 public class ControllerLogAspect {
-
     private static final Logger logger = LoggerFactory.getLogger(ControllerLogAspect.class);
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
     public Object logHttpRequests(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        HttpServletResponse response = attributes.getResponse();
+        HttpServletRequest request = attributes != null ? attributes.getRequest() : null;
+        HttpServletResponse response = attributes != null ? attributes.getResponse() : null;
 
-        // Log request details
-        logger.info("HTTP Method: {}", request.getMethod());
-        logger.info("Request URL: {}", request.getRequestURL().toString());
-        logger.info("Request Headers: {}", getRequestHeaders(request));
+        HttpLog httpLog = new HttpLog();
+        if (request != null) {
+            httpLog.setMethod(request.getMethod());
+            httpLog.setUriEndpoint(request.getRequestURL().toString());
+            httpLog.setRequestHeaders(getRequestHeaders(request));
+        }
 
         long start = System.currentTimeMillis();
 
         Object result = joinPoint.proceed();
 
         long elapsedTime = System.currentTimeMillis() - start;
+        httpLog.setExecutionTime(elapsedTime);
 
-        // Log response details
-        logger.info("Response Status: {}", response.getStatus());
-        logger.info("Response Headers: {}", getResponseHeaders(response));
-        logger.info("Execution time: {} ms", elapsedTime);
+        if (response != null) {
+            httpLog.setStatusCode(response.getStatus());
+            httpLog.setResponseHeaders(getResponseHeaders(response));
+        }
+
+        logger.info("HTTP Log:\nMethod: {}\nRequest URL: {}\nResponse Status: {}\nExecution Time: {} ms",
+                httpLog.getMethod(), httpLog.getUriEndpoint(), httpLog.getStatusCode(), httpLog.getExecutionTime());
 
         return result;
     }
 
-    private String getRequestHeaders(HttpServletRequest request) {
+    private Map<String, String> getRequestHeaders(HttpServletRequest request) {
+        Map<String, String> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
-        StringBuilder headers = new StringBuilder();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            headers.append(headerName).append(": ").append(request.getHeader(headerName)).append(", ");
+            headers.put(headerName, request.getHeader(headerName));
         }
-        return headers.toString();
+        return headers;
     }
 
-    private String getResponseHeaders(HttpServletResponse response) {
-        return response.getHeaderNames().stream()
-                .map(headerName -> headerName + ": " + response.getHeader(headerName))
-                .reduce((header1, header2) -> header1 + ", " + header2)
-                .orElse("");
+    private Map<String, String> getResponseHeaders(HttpServletResponse response) {
+        Map<String, String> headers = new HashMap<>();
+        for (String headerName : response.getHeaderNames()) {
+            headers.put(headerName, response.getHeader(headerName));
+        }
+        return headers;
     }
 }
+

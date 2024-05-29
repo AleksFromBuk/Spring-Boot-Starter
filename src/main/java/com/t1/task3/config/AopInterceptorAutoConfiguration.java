@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 @AutoConfiguration
 @EnableConfigurationProperties(LoggingProperties.class)
 @ConditionalOnProperty(prefix = "http.aop.interceptor", name = "enabled", havingValue = "true", matchIfMissing = true)
-
 public class AopInterceptorAutoConfiguration {
 
     @Bean
@@ -19,4 +18,9 @@ public class AopInterceptorAutoConfiguration {
         return new ControllerLogAspect();
     }
 
+    @Bean
+    @ConditionalOnProperty(prefix = "http.aop.interceptor", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public ControllerLogAspect controllerLogAspect2() {
+        return new ControllerLogAspect();
+    }
 }
