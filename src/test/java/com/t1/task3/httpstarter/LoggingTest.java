@@ -65,14 +65,9 @@ public class LoggingTest {
 
     @Test
     public void controllerLogAspect_shouldLogRequestAndResponse(CapturedOutput output) throws Throwable {
-        // Mock the join point to return a dummy value
         when(joinPoint.proceed()).thenReturn(null);
         when(joinPoint.getSignature()).thenReturn(mock(MethodSignature.class));
-
-        // Invoke the aspect method manually to simulate a controller call
         aspect.logHttpRequests(joinPoint);
-
-        // Verify the logs
         assertThat(output).contains("-- HTTP Log:");
         assertThat(output).contains("Method: GET");
         assertThat(output).contains("Request URL: http://localhost/test");

@@ -20,8 +20,14 @@ import java.util.Map;
 @Component
 public class ControllerLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(ControllerLogAspect.class);
+    private static final String TARGET_SCOPE = "@annotation(org.springframework.web.bind.annotation.RequestMapping) "
+            + "|| @annotation(org.springframework.web.bind.annotation.GetMapping)"
+            + "|| @annotation(org.springframework.web.bind.annotation.PostMapping)"
+            + "|| @annotation(org.springframework.web.bind.annotation.PutMapping)"
+            + "|| @annotation(org.springframework.web.bind.annotation.DeleteMapping)"
+            + " || @annotation(org.springframework.web.bind.annotation.PatchMapping)";
 
-    @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    @Around(TARGET_SCOPE)
     public Object logHttpRequests(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes != null ? attributes.getRequest() : null;
@@ -45,10 +51,13 @@ public class ControllerLogAspect {
             httpLog.setStatusCode(response.getStatus());
             httpLog.setResponseHeaders(getResponseHeaders(response));
         }
-
-        logger.info("HTTP Log:\nMethod: {}\nRequest URL: {}\nResponse Status: {}\nExecution Time: {} ms",
-                httpLog.getMethod(), httpLog.getUriEndpoint(), httpLog.getStatusCode(), httpLog.getExecutionTime());
-
+        logger.info("HTTP Log:\nMethod: {}\nRequest URL: {}\nRequest Headers: {}\nResponse Status: {}\nResponse Headers: {}\nExecution Time: {} ms",
+                httpLog.getMethod(),
+                httpLog.getUriEndpoint(),
+                httpLog.getRequestHeaders(),
+                httpLog.getStatusCode(),
+                httpLog.getResponseHeaders(),
+                httpLog.getExecutionTime());
         return result;
     }
 
