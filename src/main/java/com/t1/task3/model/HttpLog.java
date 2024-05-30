@@ -12,16 +12,4 @@ public class HttpLog {
     private Map<String, String> requestHeaders;
     private Map<String, String> responseHeaders;
     private long executionTime;
-
-    @Override
-    public String toString() {
-        return "\n=========================================\n" +
-                "Тип запроса: " + method + "\n" +
-                "URI эндпоинта: " + uriEndpoint + "\n" +
-                "Статус: " + statusCode + "\n" +
-                "Заголовки запроса: " + requestHeaders + "\n" +
-                "Заголовки ответа: " + responseHeaders + "\n" +
-                "Время выполнения запроса: " + executionTime + " мс" + "\n" +
-                "=========================================";
-    }
 }
