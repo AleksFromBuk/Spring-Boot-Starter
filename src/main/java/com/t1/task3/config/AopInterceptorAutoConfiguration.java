@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 public class AopInterceptorAutoConfiguration {
 
     @Bean
-    @ConditionalOnExpression("${http.aop.interceptor.enable:false}")
+    @ConditionalOnExpression("${http.aop.interceptor.enabled:false}")
     public FilterRegistrationBean<LoggingFilter> loggingFilter() {
         FilterRegistrationBean<LoggingFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new LoggingFilter());

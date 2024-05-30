@@ -89,7 +89,7 @@ public class LoggingTest {
     void whenInvalidProperty_thenThrowLoggingProcessException() {
         ConfigurableEnvironment environment = new StandardEnvironment();
         environment.getPropertySources()
-                .addFirst(new MapPropertySource("test", Collections.singletonMap("http.aop.interceptor.enable", "invalid_value")));
+                .addFirst(new MapPropertySource("test", Collections.singletonMap("http.aop.interceptor.enabled", "invalid_value")));
 
         LoggingEnvironmentPostProcessor processor = new LoggingEnvironmentPostProcessor();
 
