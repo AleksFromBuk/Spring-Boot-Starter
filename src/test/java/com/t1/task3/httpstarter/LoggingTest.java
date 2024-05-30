@@ -1,6 +1,6 @@
 package com.t1.task3.httpstarter;
 
-import com.t1.task3.config.AopInterceptorAutoConfiguration;
+import com.t1.task3.config.FilterAutoConfiguration;
 import com.t1.task3.exception.LoggingProcessException;
 import com.t1.task3.filter.LoggingFilter;
 import com.t1.task3.init.LoggingEnvironmentPostProcessor;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(OutputCaptureExtension.class)
 public class LoggingTest {
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(AopInterceptorAutoConfiguration.class));
+            .withConfiguration(AutoConfigurations.of(FilterAutoConfiguration.class));
 
 
     @Test

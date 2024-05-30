@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 @AutoConfiguration
 @EnableConfigurationProperties(LoggingProperties.class)
 @ConditionalOnProperty(prefix = "http.aop.interceptor", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class AopInterceptorAutoConfiguration {
+public class FilterAutoConfiguration {
 
     @Bean
     @ConditionalOnExpression("${http.aop.interceptor.enabled:false}")
