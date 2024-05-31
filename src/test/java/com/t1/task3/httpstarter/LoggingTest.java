@@ -95,7 +95,7 @@ public class LoggingTest {
 
         assertThatExceptionOfType(LoggingProcessException.class)
                 .isThrownBy(() -> processor.postProcessEnvironment(environment, new SpringApplication()))
-                .withMessageContaining("Ошибка при проверке свойства 'http.aop.interceptor.enable':");
+                .withMessageContaining("Ошибка при проверке свойства 'http.aop.interceptor.enable'");
     }
 
 }
